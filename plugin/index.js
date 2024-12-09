@@ -25,97 +25,97 @@
 const client = require('node-tado-client')
 
 // Create a new Tado instance
-var tado = new client.TadoX()
+const tado = new client.TadoX()
 
 module.exports = function (app) {
-    const plugin = {
-        id: 'signalk-tado-integration',
-        name: 'SignalK Tado X Integration',
-        description: 'A plugin to pull data from Tado X smart heating appliances into SignalK'
-    }
-    
-    let job
+  const plugin = {
+    id: 'signalk-tado-integration',
+    name: 'SignalK Tado X Integration',
+    description: 'A plugin to pull data from Tado X smart heating appliances into SignalK'
+  }
 
-    plugin.start = function (options) {
-        if(options.username && options.password) {
-            job = setInterval(function () {
-                tado.login(options.username, options.password).then(() => {
-                    tado.getMe().then((response) => {
-                        response.homes.forEach(home => {
-                            tado.getRooms(home.id).then(response => {
-                                response.forEach(room => {
-                                    app.handleMessage(
-                                        plugin.id,
-                                        {
-                                            updates: [{ 
-                                                values: [
-                                                    {
-                                                        path: `environment.inside.${safeRoomName(room.name)}.temperature`,
-                                                        value: toKelvin(room.sensorDataPoints.insideTemperature.value)
-                                                    },
-                                                    {
-                                                        path: `environment.inside.${safeRoomName(room.name)}.humidity`,
-                                                        value: room.sensorDataPoints.humidity.percentage / 100
-                                                    },
-                                                    {
-                                                        path: `environment.inside.${safeRoomName(room.name)}.temperatureSetting`,
-                                                        value: toKelvin(room.setting.temperature.value)
-                                                    },
-                                                    {
-                                                        path: `environment.inside.${safeRoomName(room.name)}.heatingStatus`,
-                                                        value: room.setting.power
-                                                    }
-                                                ] 
-                                            }]
-                                        },
-                                        'v2'
-                                    )
-                                })
-                            })
-                        })
-                    })
-                }, () => {
-                    app.debug('Login failure')
+  let job
+
+  plugin.start = function (options) {
+    if (options.username && options.password) {
+      job = setInterval(function () {
+        tado.login(options.username, options.password).then(() => {
+          tado.getMe().then((response) => {
+            response.homes.forEach(home => {
+              tado.getRooms(home.id).then(response => {
+                response.forEach(room => {
+                  app.handleMessage(
+                    plugin.id,
+                    {
+                      updates: [{
+                        values: [
+                          {
+                            path: `environment.inside.${safeRoomName(room.name)}.temperature`,
+                            value: toKelvin(room.sensorDataPoints.insideTemperature.value)
+                          },
+                          {
+                            path: `environment.inside.${safeRoomName(room.name)}.humidity`,
+                            value: room.sensorDataPoints.humidity.percentage / 100
+                          },
+                          {
+                            path: `environment.inside.${safeRoomName(room.name)}.temperatureSetting`,
+                            value: toKelvin(room.setting.temperature.value)
+                          },
+                          {
+                            path: `environment.inside.${safeRoomName(room.name)}.heatingStatus`,
+                            value: room.setting.power
+                          }
+                        ]
+                      }]
+                    },
+                    'v2'
+                  )
                 })
-            }, options.updateFrequency * 1000)
-        }
+              })
+            })
+          })
+        }, () => {
+          app.debug('Login failure')
+        })
+      }, options.updateFrequency * 1000)
     }
-    
-    plugin.stop = function () {
-        if(job) {
-            clearInterval(job)
-        }
-    }
-    
-    plugin.schema = {
-        title: 'A registration form',
-        description: 'This plugin queries Tado\'s servers to retreive information from your appliances and publish the data as SignalK paths',
-        type: 'object',
-        required: ['username', 'password', 'updateFrequency'],
-        properties: {
-            username: {
-                type: 'string',
-                title: 'Your Tado account username (email)'
-            },
-            password: {
-                type: 'string',
-                title: 'Your Tado account password'
-            },
-            updateFrequency: {
-                type: 'number',
-                title: 'How often to update data (seconds)',
-                default: 60
-            }
-        }
-    }
+  }
 
-    function toKelvin(celcius) {
-        return celcius + 273.15
+  plugin.stop = function () {
+    if (job) {
+      clearInterval(job)
     }
+  }
 
-    function safeRoomName(roomName) {
-        return roomName.replace(/[^A-Za-z0-9]/g, "")
+  plugin.schema = {
+    title: 'A registration form',
+    description: 'This plugin queries Tado\'s servers to retreive information from your appliances and publish the data as SignalK paths',
+    type: 'object',
+    required: ['username', 'password', 'updateFrequency'],
+    properties: {
+      username: {
+        type: 'string',
+        title: 'Your Tado account username (email)'
+      },
+      password: {
+        type: 'string',
+        title: 'Your Tado account password'
+      },
+      updateFrequency: {
+        type: 'number',
+        title: 'How often to update data (seconds)',
+        default: 60
+      }
     }
+  }
 
-    return plugin
+  function toKelvin (celcius) {
+    return celcius + 273.15
+  }
+
+  function safeRoomName (roomName) {
+    return roomName.replace(/[^A-Za-z0-9]/g, '')
+  }
+
+  return plugin
 }
