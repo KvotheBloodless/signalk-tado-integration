@@ -26,5 +26,8 @@
     "@eslint/js": "^8.57.1",
     "eslint": "^8.57.1",
     "globals": "^15.13.0"
+  },
+  "dependencies": {
+    "node-tado-client": "^0.21.3"
   }
 }
