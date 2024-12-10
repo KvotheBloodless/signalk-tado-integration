@@ -44,9 +44,6 @@ module.exports = function (app) {
             response.homes.forEach(home => {
               tado.getRooms(home.id).then(response => {
                 response.forEach(room => {
-
-                  app.debug(`==> ${JSON.stringify(room)}`)
-
                   const paths = []
                   paths.push({
                     path: `environment.inside.${safeRoomName(room.name)}.temperature`,
@@ -66,7 +63,7 @@ module.exports = function (app) {
                       value: toKelvin(room.setting.temperature.value)
                     })
                   }
-                  
+
                   app.handleMessage(
                     plugin.id,
                     {
