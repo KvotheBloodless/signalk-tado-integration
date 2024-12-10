@@ -1,6 +1,6 @@
 {
   "name": "signalk-tado-integration",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A plugin to pull data from Tado smart heating appliances into SignalK",
   "main": "plugin/index.js",
   "scripts": {
@@ -11,6 +11,9 @@
     "signalk-category-utility"
   ],
   "signalk-plugin-enabled-by-default": false,
+  "signalk": {
+    "displayName": "Tado X Integration"
+  },
   "author": "Paul Willems",
   "license": "MIT",
   "homepage": "https://github.com/KvotheBloodless/signalk-tado-integration",
