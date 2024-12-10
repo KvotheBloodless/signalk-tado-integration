@@ -50,7 +50,9 @@ In the Signal K menu, head to Server -> Plugin Config, and find Tado X Integrati
 
 ## 🎈 Usage <a name="usage"></a>
 
-The data will become available and you can nwo come up with a creative way to use it.
+The data will become available and you can nwo come up with a creative way to use it.<br/>
+<img width="347" alt="image" src="https://github.com/user-attachments/assets/8ba77bcc-f5a0-4baf-b5dd-7d66fcb829ed">
+
 
 ## ✍️ Authors <a name = "authors"></a>
 
