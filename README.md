@@ -24,7 +24,7 @@
 
 ## 🧐 About <a name = "about"></a>
 
- * Garmin's ActiveCaptain brings together the large boating community enabling sharing of information making boating safer, less expensive and more enjoyable.
+ * Signal K is an open source server application that runs as a central information hub on a boat. It centralises data, provides a rich API to consume the data, and is extensible through a comprehensive suite of plugins (such as this one) and web applications.
 
  * Tado markets a range of smart heating appliances.
 
