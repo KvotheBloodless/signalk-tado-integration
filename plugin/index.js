@@ -1,26 +1,26 @@
 /*
-    * MIT License
-    *
-    * Copyright (c) 2024 Paul Willems <paul.willems@gmail.com>
-    *
-    * Permission is hereby granted, free of charge, to any person obtaining a copy
-    * of this software and associated documentation files (the "Software"), to deal
-    * in the Software without restriction, including without limitation the rights
-    * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    * copies of the Software, and to permit persons to whom the Software is
-    * furnished to do so, subject to the following conditions:
-    *
-    * The above copyright notice and this permission notice shall be included in all
-    * copies or substantial portions of the Software.
-    *
-    * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    * SOFTWARE.
-    */
+ * MIT License
+ *
+ * Copyright (c) 2024 Paul Willems <paul.willems@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 const client = require('node-tado-client')
 
@@ -44,28 +44,34 @@ module.exports = function (app) {
             response.homes.forEach(home => {
               tado.getRooms(home.id).then(response => {
                 response.forEach(room => {
+
+                  app.debug(`==> ${JSON.stringify(room)}`)
+
+                  const paths = []
+                  paths.push({
+                    path: `environment.inside.${safeRoomName(room.name)}.temperature`,
+                    value: toKelvin(room.sensorDataPoints.insideTemperature.value)
+                  })
+                  paths.push({
+                    path: `environment.inside.${safeRoomName(room.name)}.humidity`,
+                    value: room.sensorDataPoints.humidity.percentage / 100
+                  })
+                  paths.push({
+                    path: `environment.inside.${safeRoomName(room.name)}.heatingStatus`,
+                    value: room.setting.power
+                  })
+                  if (room.setting.power !== 'OFF') {
+                    paths.push({
+                      path: `environment.inside.${safeRoomName(room.name)}.temperatureSetting`,
+                      value: toKelvin(room.setting.temperature.value)
+                    })
+                  }
+                  
                   app.handleMessage(
                     plugin.id,
                     {
                       updates: [{
-                        values: [
-                          {
-                            path: `environment.inside.${safeRoomName(room.name)}.temperature`,
-                            value: toKelvin(room.sensorDataPoints.insideTemperature.value)
-                          },
-                          {
-                            path: `environment.inside.${safeRoomName(room.name)}.humidity`,
-                            value: room.sensorDataPoints.humidity.percentage / 100
-                          },
-                          {
-                            path: `environment.inside.${safeRoomName(room.name)}.temperatureSetting`,
-                            value: toKelvin(room.setting.temperature.value)
-                          },
-                          {
-                            path: `environment.inside.${safeRoomName(room.name)}.heatingStatus`,
-                            value: room.setting.power
-                          }
-                        ]
+                        values: paths
                       }]
                     },
                     'v2'
