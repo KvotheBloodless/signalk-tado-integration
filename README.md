@@ -1,4 +1,4 @@
-<h3 align="center">SignalK Active Captain Resources</h3>
+<h3 align="center">SignalK Tado X Integration</h3>
 
 <div align="center">
 
