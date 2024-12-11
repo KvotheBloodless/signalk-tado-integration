@@ -1,6 +1,6 @@
 {
   "name": "signalk-tado-integration",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A plugin to pull data from Tado smart heating appliances into SignalK",
   "main": "plugin/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
   },
   "keywords": [
     "signalk-node-server-plugin",
-    "signalk-category-utility"
+    "signalk-category-hardware",
+    "tado"
   ],
   "signalk-plugin-enabled-by-default": false,
   "signalk": {
